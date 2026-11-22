@@ -105,12 +105,18 @@
     // The pinned stage is 100svh tall, which stays fixed when a phone's address bar slides in or out.
     // window.innerHeight does change then, so it must not be used here: it made pages snap back mid-turn.
     function measure() { span = Math.max(1, book.offsetHeight - stage.offsetHeight); }
-    function read() { target = Math.min(1, Math.max(0, -book.getBoundingClientRect().top / span)) * (n - 1); }
-    function ease(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+    // Scrolling decides WHICH page is open; the turn itself always plays at the same calm speed.
+    // (Following the finger 1:1 made a quick swipe skip a whole turn in one frame on phones.)
+    var TURN_MS = 620;
+    function read() {
+      var raw = Math.min(1, Math.max(0, -book.getBoundingClientRect().top / span)) * (n - 1);
+      if (Math.abs(raw - target) > 0.58) target = Math.round(raw);   // small hysteresis: no flicker at the boundary
+    }
+    function ease(x) { return (1 - Math.cos(Math.PI * x)) / 2; }   // gentle start and stop, no sudden peak speed
     function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
     function paint(t) {
       var turns = [], i, j;
-      for (i = 0; i < n; i++) turns.push(i === n - 1 ? 0 : ease(clamp((t - i - 0.16) / 0.84)));
+      for (i = 0; i < n; i++) turns.push(i === n - 1 ? 0 : ease(clamp(t - i)));
       for (j = 0; j < n; j++) {
         var e = turns[j], deg = e * 176;
         var m = (j < t - 1.01 || j > t + 1.99) ? 'off' : (e > 0.001 && e < 0.999) ? 'live' : 'rest';
@@ -136,8 +142,9 @@
     // finger or a mouse-wheel notch still gives one continuous turn.
     function frame(now) {
       var dt = Math.min(64, now - (last || now)); last = now;
-      var d = target - shown;
-      shown = Math.abs(d) < 0.0006 ? target : shown + d * (1 - Math.exp(-dt / 105));
+      var d = target - shown, dist = Math.abs(d);
+      var speed = (dt / TURN_MS) * (dist > 1 ? Math.min(1.8, 1 + (dist - 1) * 0.4) : 1);   // several pages behind: catch up a bit faster
+      shown = dist <= speed ? target : shown + (d > 0 ? speed : -speed);
       paint(shown);
       if (shown === target) { raf = 0; last = 0; } else raf = requestAnimationFrame(frame);
     }
@@ -153,7 +160,7 @@
     window.addEventListener('resize', function () { measure(); kick(); });
     window.addEventListener('load', function () { measure(); kick(); });
     if ('ResizeObserver' in window) new ResizeObserver(function () { measure(); kick(); }).observe(book);
-    measure(); read(); shown = target; paint(shown);
+    measure(); target = Math.round(Math.min(1, Math.max(0, -book.getBoundingClientRect().top / span)) * (n - 1)); shown = target; paint(shown);
   })();
 
   /* ---------- availability ---------- */

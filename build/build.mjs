@@ -143,10 +143,14 @@ ${LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${DOMAIN}${pathOf(
 
   <!-- 3 · THE DAY AS A STORY: the logbook (signature move, bespoke) -->
   <section class="book" id="day" data-book>
+    <div class="book__intro">
+      <h2 class="display display--lg" data-i18n="story.h"></h2>
+      <p class="lede" data-i18n="story.p"></p>
+    </div>
     <div class="book__stage">
       <div class="book__head">
-        <h2 class="display display--lg" data-i18n="story.h"></h2>
-        <p class="lede" data-i18n="story.p"></p>
+        <p class="display display--lg book__h2" aria-hidden="true" data-i18n="story.h"></p>
+        <p class="lede book__lede" data-i18n="story.p"></p>
         <div class="book__nav">
           <button type="button" class="round" data-book-prev aria-label="{{story.prev}}" data-i18n-a="aria-label:story.prev">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>

@@ -5,13 +5,22 @@ import { REVIEWS } from './reviews.mjs';
 import { PRICES } from './prices.mjs';
 // Link to the Google Business profile (reviews)
 const GOOGLE_REVIEWS_URL = 'https://maps.app.goo.gl/eMY9RNvuRiQBUFsK9';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const DOMAIN = 'https://amphoraboat.com';
 const LANGS = ['en', 'de', 'hr'];
+// Version tag for style and script links: it changes whenever any of them changes,
+// so visitors' browsers fetch the new files right after a deploy instead of using old cached ones.
+const VER = (() => {
+  const h = createHash('sha1');
+  for (const f of ['site.css', 'site.js', 'scrollcraft.css', 'scrollcraft.js']) { try { h.update(readFileSync(join(OUT, f))); } catch (e) {} }
+  h.update(JSON.stringify(I18N)); h.update(JSON.stringify(PRICES));
+  return h.digest('hex').slice(0, 10);
+})();
 const pathOf = l => (l === 'en' ? '/' : `/${l}/`);
 const fill = v => typeof v === 'string' ? v.replace(/\{full\}/g, PRICES.full).replace(/\{half\}/g, PRICES.half) : v;
 const get = (o, p) => fill(p.split('.').reduce((a, k) => (a == null ? a : a[k]), o));
@@ -65,8 +74,8 @@ ${LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${DOMAIN}${pathOf(
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Figtree:wght@400;500;600&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="${base}assets/hero-m.webp" media="(max-width: 720px)">
 <link rel="preload" as="image" href="${base}assets/hero.webp" media="(min-width: 721px)">
-<link rel="stylesheet" href="${base}scrollcraft.css">
-<link rel="stylesheet" href="${base}site.css">
+<link rel="stylesheet" href="${base}scrollcraft.css?v=${VER}">
+<link rel="stylesheet" href="${base}site.css?v=${VER}">
 <noscript><style>[data-sc-in],[data-sc-stagger]>*{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
@@ -312,9 +321,9 @@ ${LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${DOMAIN}${pathOf(
 </div>
 
 <script>window.AMPHORA_LANG=${JSON.stringify(lang)};</script>
-<script src="${base}i18n.js"></script>
-<script src="${base}scrollcraft.js"></script>
-<script src="${base}site.js"></script>
+<script src="${base}i18n.js?v=${VER}"></script>
+<script src="${base}scrollcraft.js?v=${VER}"></script>
+<script src="${base}site.js?v=${VER}"></script>
 </body>
 </html>
 `;

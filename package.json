@@ -1,0 +1,11 @@
+{
+  "name": "amphora-boat",
+  "private": true,
+  "description": "Amphora Boat website with owner page",
+  "scripts": {
+    "start": "node server/server.js",
+    "build": "node build/build.mjs",
+    "test": "node --test test/server.test.js"
+  },
+  "engines": { "node": ">=20" }
+}

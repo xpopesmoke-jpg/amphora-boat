@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#06202b">
+<title>Amphora Boat · Owner</title>
+<link rel="icon" href="../assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Josefin+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="owner.css">
+</head>
+<body>
+
+<p class="demo" data-demo hidden>Demo: changes are saved only in this browser. On your real site they are saved on the server.</p>
+
+<!-- login -->
+<main class="login" data-login hidden>
+  <form class="login__card" data-login-form novalidate>
+    <img src="../assets/logo.webp" width="88" height="88" alt="">
+    <h1>Owner login</h1>
+    <label><span>Password</span><input type="password" name="password" autocomplete="current-password" required></label>
+    <p class="err" data-login-err role="alert" hidden></p>
+    <button class="btn" type="submit">Log in</button>
+    <p class="hint" data-demo-hint hidden>Demo: any password works.</p>
+  </form>
+</main>
+
+<!-- dashboard -->
+<div class="app" data-app hidden>
+  <header class="top">
+    <a class="top__brand" href="../" target="_blank" rel="noopener"><img src="../assets/logo.webp" width="34" height="34" alt=""><span>Amphora Boat · Owner</span></a>
+    <button class="link" type="button" data-logout>Log out</button>
+  </header>
+
+  <section class="card">
+    <h2>Calendar</h2>
+    <p class="muted">Tap a day, then mark the morning (8:00 to 13:00) and the afternoon (14:00 to 19:00) as booked or free. Guests see it right away.</p>
+    <div class="cal">
+      <div class="cal__top">
+        <button class="round" type="button" data-prev aria-label="Previous month">‹</button>
+        <p class="cal__month" data-month aria-live="polite"></p>
+        <button class="round" type="button" data-next aria-label="Next month">›</button>
+      </div>
+      <div class="cal__dow" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      <div class="cal__grid" data-grid></div>
+      <div class="legend">
+        <span><i class="bar bar--free"></i>Free</span>
+        <span><i class="bar bar--busy"></i>Booked</span>
+        <span class="muted">Top bar: morning · bottom bar: afternoon</span>
+      </div>
+    </div>
+
+    <div class="day" data-day hidden>
+      <p class="day__title" data-day-title></p>
+      <div class="day__btns">
+        <button type="button" class="slot" data-slot="am"><b>Morning</b><small>8:00 to 13:00</small><em data-slot-state="am"></em></button>
+        <button type="button" class="slot" data-slot="pm"><b>Afternoon</b><small>14:00 to 19:00</small><em data-slot-state="pm"></em></button>
+      </div>
+      <div class="day__all">
+        <button type="button" class="btn btn--line" data-all="book">Book whole day</button>
+        <button type="button" class="btn btn--line" data-all="free">Free whole day</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Prices</h2>
+    <p class="muted">Whole euros, for the whole boat. The website updates as soon as you save.</p>
+    <form class="prices" data-prices novalidate>
+      <label><span>Full day</span><div class="eur"><b>€</b><input type="number" name="full" inputmode="numeric" min="1" max="100000" step="1" required></div></label>
+      <label><span>Half day</span><div class="eur"><b>€</b><input type="number" name="half" inputmode="numeric" min="1" max="100000" step="1" required></div></label>
+      <button class="btn" type="submit">Save prices</button>
+    </form>
+  </section>
+
+  <p class="muted foot" data-updated></p>
+</div>
+
+<div class="toast" data-toast role="status" aria-live="polite"></div>
+
+<script src="owner.js"></script>
+</body>
+</html>

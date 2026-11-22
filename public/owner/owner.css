@@ -43,6 +43,7 @@ input[type="password"], .eur input { width: 100%; min-height: 3rem; padding: 0.6
 .cal__dow, .cal__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.3rem; }
 .cal__dow { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--soft); text-align: center; margin-bottom: 0.3rem; }
 .cell { position: relative; aspect-ratio: 1 / 1.15; min-height: 2.9rem; border-radius: 10px; border: 1px solid transparent; background: rgb(243 247 246 / 0.05); cursor: pointer; padding: 0.25rem 0.2rem; display: grid; grid-template-rows: 1fr auto; justify-items: center; font-variant-numeric: tabular-nums; }
+.cell-fill { aspect-ratio: 1 / 1.15; min-height: 2.9rem; }
 .cell:disabled { cursor: default; opacity: 0.35; }
 .cell.is-sel { border-color: var(--accent); background: rgb(242 178 92 / 0.14); }
 .cell.is-today .cell__n { text-decoration: underline; text-underline-offset: 0.2em; }

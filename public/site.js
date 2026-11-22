@@ -62,6 +62,16 @@
   /* ---------- header + dock ---------- */
   var bar = $('.bar'), dock = $('[data-dock]'), hero = $('.hero'), bookSec = $('#book'), closeSec = $('.close');
   var bookingSeen = false, closeSeen = false, heroSeen = true;
+  // The top bar grows by the notch height on iPhones. Publish the real heights so pinned content
+  // (story arrows, notebook) and anchor jumps always sit below the bar instead of under it.
+  function syncBars() {
+    var root = document.documentElement.style;
+    root.setProperty('--bar-h', bar.offsetHeight + 'px');
+    root.setProperty('--dock-h', (getComputedStyle(dock).display === 'none' ? 0 : dock.offsetHeight) + 'px');
+  }
+  syncBars();
+  if ('ResizeObserver' in window) { var ro = new ResizeObserver(syncBars); ro.observe(bar); ro.observe(dock); }
+  window.addEventListener('resize', syncBars);
   function syncChrome() {
     bar.classList.toggle('is-solid', window.scrollY > 24);
     dock.classList.toggle('is-up', !heroSeen && !bookingSeen);
@@ -81,7 +91,7 @@
     if (reduce || n < 2) return;                      // reduced motion: the chapters stay a plain list
     var STEP = 0.72;                                  // viewport-heights of scroll per page
     book.classList.add('book--on');
-    book.style.setProperty('--book-h', (100 + (n - 1) * STEP * 100) + 'vh');
+    book.style.setProperty('--book-h', (100 + (n - 1) * STEP * 100) + 'svh');
     var shades = [], backs = [], sheets = [], side = [], mode = [];
     pages.forEach(function (p, i) {
       p.style.zIndex = String(n - i);
@@ -89,10 +99,13 @@
       var sh = document.createElement('div'); sh.className = 'page__shade'; sh.setAttribute('aria-hidden', 'true'); $('.page__sheet', p).appendChild(sh); shades.push(sh);
       dotsEl.appendChild(document.createElement('li')); mode.push('');
     });
-    var dots = $$('li', dotsEl), cur = -1, shown = 0, target = 0, raf = 0, last = 0, top = 0, span = 1;
+    var dots = $$('li', dotsEl), cur = -1, shown = 0, target = 0, raf = 0, last = 0, span = 1;
 
-    function measure() { top = book.getBoundingClientRect().top + window.scrollY; span = Math.max(1, book.offsetHeight - window.innerHeight); }
-    function read() { target = Math.min(1, Math.max(0, (window.scrollY - top) / span)) * (n - 1); }
+    var stage = $('.book__stage', book);
+    // The pinned stage is 100svh tall, which stays fixed when a phone's address bar slides in or out.
+    // window.innerHeight does change then, so it must not be used here: it made pages snap back mid-turn.
+    function measure() { span = Math.max(1, book.offsetHeight - stage.offsetHeight); }
+    function read() { target = Math.min(1, Math.max(0, -book.getBoundingClientRect().top / span)) * (n - 1); }
     function ease(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
     function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
     function paint(t) {
@@ -131,13 +144,15 @@
     function kick() { read(); if (!raf) raf = requestAnimationFrame(frame); }
     function go(i) {
       i = Math.min(n - 1, Math.max(0, i)); measure();
-      window.scrollTo({ top: top + (i / (n - 1)) * span + 1, behavior: 'smooth' });
+      var start = book.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: start + (i / (n - 1)) * span + 1, behavior: reduce ? 'auto' : 'smooth' });
     }
     prev.addEventListener('click', function () { go(cur - 1); });
     next.addEventListener('click', function () { go(cur + 1); });
     window.addEventListener('scroll', kick, { passive: true });
     window.addEventListener('resize', function () { measure(); kick(); });
     window.addEventListener('load', function () { measure(); kick(); });
+    if ('ResizeObserver' in window) new ResizeObserver(function () { measure(); kick(); }).observe(book);
     measure(); read(); shown = target; paint(shown);
   })();
 
@@ -206,6 +221,7 @@
       if (key === state.date) { btn.classList.add('is-sel'); btn.setAttribute('aria-pressed', 'true'); }
       grid.appendChild(btn);
     }
+    for (var t = first + days; t < 42; t++) { var f = document.createElement('span'); f.className = 'day-fill'; f.setAttribute('aria-hidden', 'true'); grid.appendChild(f); }
     $('[data-cal-prev]').disabled = view.y === now.getFullYear() && view.m === now.getMonth();
     var msg = mode === 'demo' ? T.book.demo : (mode === 'error' ? T.book.err : '');
     noteEl.hidden = !msg; noteEl.textContent = msg;

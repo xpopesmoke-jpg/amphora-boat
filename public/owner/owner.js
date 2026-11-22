@@ -82,6 +82,7 @@
       if (k === sel) { c.classList.add('is-sel'); c.setAttribute('aria-pressed', 'true'); }
       grid.appendChild(c);
     }
+    for (var t = first + n; t < 42; t++) { var f = document.createElement('span'); f.className = 'cell-fill'; grid.appendChild(f); }
     $('[data-prev]').disabled = view.y === now.getFullYear() && view.m === now.getMonth();
   }
   function renderDay() {

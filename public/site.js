@@ -107,7 +107,7 @@
     function measure() { span = Math.max(1, book.offsetHeight - stage.offsetHeight); }
     // Scrolling decides WHICH page is open; the turn itself always plays at the same calm speed.
     // (Following the finger 1:1 made a quick swipe skip a whole turn in one frame on phones.)
-    var TURN_MS = 620;
+    var TURN_MS = /slowturn/.test(location.hash) ? 5000 : 620;   // #slowturn: slow motion, for checking
     function read() {
       var raw = Math.min(1, Math.max(0, -book.getBoundingClientRect().top / span)) * (n - 1);
       if (Math.abs(raw - target) > 0.58) target = Math.round(raw);   // small hysteresis: no flicker at the boundary
@@ -123,7 +123,7 @@
         if (m !== mode[j]) { mode[j] = m; pages[j].classList.toggle('is-off', m === 'off'); pages[j].classList.toggle('is-live', m === 'live'); }
         if (m === 'off') continue;
         pages[j].style.transform = 'rotateX(' + deg.toFixed(2) + 'deg)';
-        pages[j].style.opacity = deg < 68 ? '1' : clamp(1 - (deg - 68) / 46).toFixed(3);
+        pages[j].style.opacity = deg < 40 ? '1' : clamp(1 - (deg - 40) / 45).toFixed(3);   // gone before it stands edge-on
         var sd = deg > 90 ? 2 : 1;                       // past edge-on we are looking at the back of the sheet
         if (sd !== side[j]) { side[j] = sd; sheets[j].style.visibility = sd === 2 ? 'hidden' : 'visible'; backs[j].style.visibility = sd === 2 ? 'visible' : 'hidden'; }
         // a page darkens a little as it lifts, and casts a shadow on the page beneath it

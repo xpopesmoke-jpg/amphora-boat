@@ -172,7 +172,9 @@ button, input { font: inherit; color: inherit; }
 .book--on .book__nav { display: flex; align-items: center; gap: 0.9rem; justify-content: center; margin-top: 0; }
 .book--on .book__pad { position: relative; min-height: 0; width: min(100%, 26rem, calc((100svh - var(--bar-h, 4rem) - var(--dock-h, 4.6rem) - 5rem) * 0.74)); margin-inline: auto; }
 .book--on .book__rings { display: block; position: absolute; z-index: 20; left: 0; right: 0; top: 0; height: 38px; pointer-events: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='38'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%236f7d84'/%3E%3Cstop offset='.45' stop-color='%23f2f5f6'/%3E%3Cstop offset='1' stop-color='%23808d94'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='10.2' y='2' width='7.6' height='33' rx='3.8' fill='none' stroke='%23000' stroke-opacity='.28' stroke-width='3.4' transform='translate(1 1.2)'/%3E%3Crect x='10.2' y='2' width='7.6' height='33' rx='3.8' fill='none' stroke='url(%23g)' stroke-width='2.6'/%3E%3C/svg%3E") center top / 28px 38px repeat-x; }
-.book--on .book__pages { display: block; position: absolute; inset: 14px 0 0 0; perspective: 1700px; perspective-origin: 50% -10%; }
+.book--on .book__pages { display: block; position: absolute; inset: 14px 0 0 0; perspective: 2600px; perspective-origin: 50% 0%;
+  /* a turning page is cut off at the rings: it can never sweep over the arrows or the top of the screen */
+  clip-path: inset(0 -40px -60px -40px); }
 .book--on .book__pages::before, .book--on .book__pages::after { content: ""; position: absolute; inset: 0; border-radius: 4px 4px 12px 12px; background: #e6decd; box-shadow: 0 26px 46px -24px rgb(0 0 0 / 0.8); }
 .book--on .book__pages::before { transform: translateY(7px) scaleX(0.985); background: #d2c9b6; }
 .book--on .book__pages::after { transform: translateY(3.5px) scaleX(0.993); }

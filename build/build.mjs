@@ -17,7 +17,7 @@ const LANGS = ['en', 'de', 'hr'];
 // so visitors' browsers fetch the new files right after a deploy instead of using old cached ones.
 const VER = (() => {
   const h = createHash('sha1');
-  for (const f of ['site.css', 'site.js', 'scrollcraft.css', 'scrollcraft.js']) { try { h.update(readFileSync(join(OUT, f))); } catch (e) {} }
+  for (const f of ['site.css', 'site.js', 'scrollcraft.css', 'scrollcraft.js', 'diag.js']) { try { h.update(readFileSync(join(OUT, f))); } catch (e) {} }
   h.update(JSON.stringify(I18N)); h.update(JSON.stringify(PRICES));
   return h.digest('hex').slice(0, 10);
 })();
@@ -321,6 +321,8 @@ ${LANGS.map(l => `<link rel="alternate" hreflang="${l}" href="${DOMAIN}${pathOf(
 </div>
 
 <script>window.AMPHORA_LANG=${JSON.stringify(lang)};</script>
+<script>window.AMPHORA_VER="${VER}";</script>
+<script src="${base}diag.js?v=${VER}"></script>
 <script src="${base}i18n.js?v=${VER}"></script>
 <script src="${base}scrollcraft.js?v=${VER}"></script>
 <script src="${base}site.js?v=${VER}"></script>
